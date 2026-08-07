@@ -432,3 +432,131 @@ footer {
         gap: 12px;
     }
 }
+
+// ================= CART =================
+
+let cartCount = 0;
+
+const cartNumber = document.getElementById("cart-count");
+const cartButtons = document.querySelectorAll(".add-cart");
+
+cartButtons.forEach(function(button) {
+
+    button.addEventListener("click", function() {
+
+        cartCount++;
+
+        cartNumber.textContent = cartCount;
+
+        // Change button text
+        button.textContent = "Added ✓";
+
+        // Change back after 1 second
+        setTimeout(function() {
+            button.textContent = "Add to Cart";
+        }, 1000);
+
+    });
+
+});
+
+
+// ================= CONTACT FORM =================
+
+const contactForm = document.getElementById("contactForm");
+
+contactForm.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    alert("Thank you! Your message has been sent successfully.");
+
+    contactForm.reset();
+
+});
+
+
+// ================= SHOP OFFERS =================
+
+const offerButton = document.querySelector(".offer-box .btn");
+
+offerButton.addEventListener("click", function() {
+
+    document.getElementById("products").scrollIntoView({
+        behavior: "smooth"
+    });
+
+});
+
+
+// ================= SMOOTH NAVIGATION =================
+
+const navigationLinks = document.querySelectorAll("a[href^='#']");
+
+navigationLinks.forEach(function(link) {
+
+    link.addEventListener("click", function(event) {
+
+        const target = document.querySelector(
+            link.getAttribute("href")
+        );
+
+        if (target) {
+
+            event.preventDefault();
+
+            target.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+
+    });
+
+});
+
+
+// ================= SEARCH ICON =================
+
+const searchIcon = document.querySelector(".header-icons span");
+
+searchIcon.addEventListener("click", function() {
+
+    const search = prompt("What beauty product are you looking for?");
+
+    if (search) {
+        alert("Searching for: " + search);
+    }
+
+});
+
+
+// ================= FAVORITE ICON =================
+
+const headerIcons = document.querySelectorAll(".header-icons span");
+
+headerIcons[1].addEventListener("click", function() {
+
+    alert("Your wishlist is currently empty ❤️");
+
+});
+
+
+// ================= CART ICON =================
+
+headerIcons[2].addEventListener("click", function() {
+
+    if (cartCount === 0) {
+
+        alert("Your cart is empty 🛒");
+
+    } else {
+
+        alert(
+            "You have " + cartCount +
+            " product(s) in your cart 🛒"
+        );
+
+    }
+
+});
