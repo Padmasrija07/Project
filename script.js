@@ -1,293 +1,253 @@
-// ================================
-// GLOW BEAUTY STORE - script.js
-// ================================
+// ================= CART DATA =================
 
-// Dark Mode
-const darkBtn = document.getElementById("dark-btn");
+let cart = JSON.parse(localStorage.getItem("beautyCart")) || [];
 
-if (darkBtn) {
-    darkBtn.addEventListener("click", () => {
-        document.body.classList.toggle("dark");
 
-        const icon = darkBtn.querySelector("i");
+// ================= SAVE CART =================
 
-        if (document.body.classList.contains("dark")) {
-            icon.classList.remove("fa-moon");
-            icon.classList.add("fa-sun");
-        } else {
-            icon.classList.remove("fa-sun");
-            icon.classList.add("fa-moon");
-        }
-    });
+function saveCart() {
+    localStorage.setItem("beautyCart", JSON.stringify(cart));
 }
 
-// ================================
-// CART
-// ================================
 
-let cartCount = 0;
+// ================= UPDATE CART COUNT =================
 
-const cartDisplay = document.getElementById("cart-count");
+function updateCartCount() {
 
-const cartButtons = document.querySelectorAll(".product-card button");
+    const cartCount = document.getElementById("cart-count");
 
-cartButtons.forEach(button => {
+    if (cartCount) {
+        cartCount.textContent = cart.length;
+    }
+}
 
-    button.addEventListener("click", () => {
 
-        cartCount++;
+// ================= ADD TO CART =================
 
-        if (cartDisplay) {
-            cartDisplay.innerText = cartCount;
-        }
+const addButtons = document.querySelectorAll(".add-cart");
 
-        button.innerText = "Added ✓";
+addButtons.forEach(function(button) {
 
-        button.style.background = "#28a745";
+    button.addEventListener("click", function() {
 
-        setTimeout(() => {
+        const productCard = button.closest(".product-card");
 
-            button.innerText = "Add to Cart";
+        const name =
+            productCard.querySelector("h3").textContent;
 
-            button.style.background = "#e91e63";
+        const priceText =
+            productCard.querySelector("p").textContent;
 
-        }, 1200);
+        const price =
+            parseInt(priceText.replace(/[^\d]/g, ""));
+
+        const image =
+            productCard.querySelector("img").getAttribute("src");
+
+
+        const product = {
+            name: name,
+            price: price,
+            image: image
+        };
+
+
+        cart.push(product);
+
+        saveCart();
+
+        updateCartCount();
+
+        button.textContent = "Added ✓";
+
+        setTimeout(function() {
+            button.textContent = "Add to Cart";
+        }, 1000);
 
     });
 
 });
 
-// ================================
-// SEARCH
-// ================================
 
-const searchInput = document.querySelector(".search-box input");
+// ================= DISPLAY CART =================
 
-const productCards = document.querySelectorAll(".product-card");
+function displayCart() {
 
-if (searchInput) {
+    const cartItems =
+        document.getElementById("cart-items");
 
-    searchInput.addEventListener("keyup", () => {
+    const totalItems =
+        document.getElementById("total-items");
 
-        const value = searchInput.value.toLowerCase();
+    const totalPrice =
+        document.getElementById("total-price");
 
-        productCards.forEach(card => {
 
-            const name = card.querySelector("h3").innerText.toLowerCase();
+    if (!cartItems) {
+        return;
+    }
 
-            if (name.includes(value)) {
 
-                card.style.display = "block";
+    cartItems.innerHTML = "";
 
-            } else {
 
-                card.style.display = "none";
+    if (cart.length === 0) {
 
-            }
+        cartItems.innerHTML =
+            "<p>Your cart is empty 🛒</p>";
 
-        });
-
-    });
-
-}
-
-// ================================
-// SMOOTH SCROLL
-// ================================
-
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-
-    link.addEventListener("click", function(e) {
-
-        e.preventDefault();
-
-        const target = document.querySelector(this.getAttribute("href"));
-
-        if (target) {
-
-            target.scrollIntoView({
-
-                behavior: "smooth"
-
-            });
-
+        if (totalItems) {
+            totalItems.textContent = "0";
         }
 
+        if (totalPrice) {
+            totalPrice.textContent = "₹0";
+        }
+
+        return;
+    }
+
+
+    let total = 0;
+
+
+    cart.forEach(function(product, index) {
+
+        total += product.price;
+
+
+        const item = document.createElement("div");
+
+        item.className = "cart-item";
+
+
+        item.innerHTML = `
+            <img src="${product.image}" 
+                 alt="${product.name}">
+
+            <div>
+                <h3>${product.name}</h3>
+                <p>₹${product.price}</p>
+
+                <button 
+                    class="remove-btn"
+                    onclick="removeFromCart(${index})">
+                    Remove
+                </button>
+            </div>
+        `;
+
+
+        cartItems.appendChild(item);
+
     });
 
-});
 
-// ================================
-// PAGE LOADED
-// ================================
-
-window.addEventListener("load", () => {
-
-    console.log("Glow Beauty Store Loaded Successfully");
-
-});
+    if (totalItems) {
+        totalItems.textContent = cart.length;
+    }
 
 
-// ====================================
-// GLOW BEAUTY STORE - script.js Part 2
-// ====================================
-
-// -------------------------------
-// Wishlist
-// -------------------------------
-
-const heartIcon = document.querySelector(".fa-heart");
-
-let wishlistCount = 0;
-
-if (heartIcon) {
-
-    heartIcon.addEventListener("click", () => {
-
-        wishlistCount++;
-
-        alert("Added to Wishlist ❤️");
-
-        heartIcon.style.color = "#e91e63";
-
-    });
-
-}
-
-// -------------------------------
-// Save Cart Count
-// -------------------------------
-
-if(localStorage.getItem("cartCount")){
-
-    cartCount = Number(localStorage.getItem("cartCount"));
-
-    if(cartDisplay){
-
-        cartDisplay.innerText = cartCount;
-
+    if (totalPrice) {
+        totalPrice.textContent = "₹" + total;
     }
 
 }
 
-cartButtons.forEach(button=>{
 
-    button.addEventListener("click",()=>{
+// ================= REMOVE FROM CART =================
 
-        localStorage.setItem("cartCount",cartCount);
+function removeFromCart(index) {
 
-    });
+    cart.splice(index, 1);
 
-});
+    saveCart();
 
-// -------------------------------
-// Scroll Animation
-// -------------------------------
+    updateCartCount();
 
-const cards=document.querySelectorAll(".product-card,.category,.review-card");
+    displayCart();
 
-window.addEventListener("scroll",()=>{
+}
 
-    cards.forEach(card=>{
 
-        const position=card.getBoundingClientRect().top;
+// ================= CHECKOUT =================
 
-        const screen=window.innerHeight;
+function checkout() {
 
-        if(position<screen-100){
+    if (cart.length === 0) {
 
-            card.style.opacity="1";
+        alert("Your cart is empty!");
 
-            card.style.transform="translateY(0px)";
+        return;
+    }
+
+
+    alert(
+        "Thank you for shopping with Glow Naturally! 💗"
+    );
+
+
+    cart = [];
+
+    saveCart();
+
+    updateCartCount();
+
+    displayCart();
+
+}
+
+
+// ================= SEARCH =================
+
+const searchIcon =
+    document.querySelector(".header-icons span");
+
+
+if (searchIcon) {
+
+    searchIcon.addEventListener("click", function() {
+
+        const search =
+            prompt("Search for a beauty product:");
+
+        if (search) {
+
+            alert(
+                "Searching for: " + search
+            );
 
         }
 
     });
 
-});
+}
 
-// -------------------------------
-// Back To Top Button
-// -------------------------------
 
-const topBtn=document.createElement("button");
+// ================= WISHLIST =================
 
-topBtn.innerHTML="⬆";
+const headerIcons =
+    document.querySelectorAll(".header-icons span");
 
-topBtn.id="topBtn";
 
-document.body.appendChild(topBtn);
+if (headerIcons.length > 1) {
 
-topBtn.style.position="fixed";
-topBtn.style.right="20px";
-topBtn.style.bottom="20px";
-topBtn.style.width="50px";
-topBtn.style.height="50px";
-topBtn.style.border="none";
-topBtn.style.borderRadius="50%";
-topBtn.style.background="#e91e63";
-topBtn.style.color="#fff";
-topBtn.style.fontSize="20px";
-topBtn.style.cursor="pointer";
-topBtn.style.display="none";
-topBtn.style.zIndex="999";
+    headerIcons[1].addEventListener(
+        "click",
+        function() {
 
-window.addEventListener("scroll",()=>{
+            alert(
+                "Your wishlist is currently empty ❤️"
+            );
 
-    if(window.scrollY>300){
-
-        topBtn.style.display="block";
-
-    }else{
-
-        topBtn.style.display="none";
-
-    }
-
-});
-
-topBtn.addEventListener("click",()=>{
-
-    window.scrollTo({
-
-        top:0,
-
-        behavior:"smooth"
-
-    });
-
-});
-
-// -------------------------------
-// Newsletter Button
-// -------------------------------
-
-const subscribeBtn=document.querySelector(".subscribe-box button");
-
-if(subscribeBtn){
-
-subscribeBtn.addEventListener("click",()=>{
-
-const email=document.querySelector(".subscribe-box input").value;
-
-if(email===""){
-
-alert("Please enter your email.");
-
-}else{
-
-alert("Thank you for subscribing! 💖");
-
-document.querySelector(".subscribe-box input").value="";
+        }
+    );
 
 }
 
-});
 
-}
+// ================= PAGE LOAD =================
 
-// -------------------------------
-// Contact Button Alert
-// -------------------------------
+updateCartCount();
 
-console.log("All JavaScript Loaded Successfully 🚀");
+displayCart();
