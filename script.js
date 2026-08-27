@@ -251,3 +251,27 @@ if (headerIcons.length > 1) {
 updateCartCount();
 
 displayCart();
+function sendMessage(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("contactName").value;
+    const email = document.getElementById("contactEmail").value;
+    const phone = document.getElementById("contactPhone").value;
+    const message = document.getElementById("contactMessage").value;
+
+    const whatsappNumber = "7708141006";
+
+    const whatsappMessage =
+        `Hello Glow Naturally!%0A%0A` +
+        `Name: ${name}%0A` +
+        `Email: ${email}%0A` +
+        `Phone: ${phone}%0A` +
+        `Message: ${message}`;
+
+    window.open(
+        `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`,
+        "_blank"
+    );
+
+    document.querySelector(".contact-form form").reset();
+}
