@@ -58,7 +58,7 @@ addButtons.forEach(function(button) {
 
         updateCartCount();
 
-        button.textContent = "Added ✓";
+        alter("Added to cart!");
 
         setTimeout(function() {
             button.textContent = "Add to Cart";
