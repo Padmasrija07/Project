@@ -227,7 +227,13 @@
     </footer>
 
 
-    <script src="script.js"></script>
+    <script>
+        document.querySelectorAll(".add-cart").forEach(function(button) {
+    button.addEventListener("click", function() {
+        alert("Added to Cart!");
+    });
+});
+    </script>
 
 </body>
 
